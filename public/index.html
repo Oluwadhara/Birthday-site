@@ -36,7 +36,7 @@
 
     <!-- 💖 About Section -->
     <section id="about">
-      <h2>About Busayo Oladipupo</h2>
+      <h2>About Busayo Okudaye</h2>
       <p>
         Busayo is an amazing soul whose smile lights up every room. She's a true
         friend, a kind heart, and the life of the party. Today, we celebrate
@@ -44,7 +44,7 @@
       </p>
     </section>
 
-    <!-- Galleries -->
+    <!-- 📸 Gallery -->
     <section id="gallery">
       <h2>Memories</h2>
       <p style="font-size: 0.9rem; opacity: 0.6">← Swipe through memories →</p>
@@ -52,13 +52,23 @@
         <img src="assets/photo4.jpg" alt="" />
         <img src="assets/hero.jpg" alt="" />
         <img src="assets/photo3.jpg" alt="" />
+        <img src="assets/24.jpg" alt="" />
+        <img src="assets/17.jpg" alt="" />
+        <img src="assets/19.jpg" alt="" />
+        <img src="assets/21.jpg" alt="" />
+        <img src="assets/22.png" alt="" />
+        <img src="assets/14.jpg" alt="" />
+        <img src="assets/15.jpg" alt="" />
+        <img src="assets/8.jpg" alt="" />
+        <img src="assets/9.jpg" alt="" />
+        <img src="assets/11.jpg" alt="" />
       </div>
     </section>
 
     <!-- 💌 Message Wall -->
     <section id="messages">
       <h2>Messages for Busayo</h2>
-      <div id="messageContainer"></div>
+      <div id="messagesContainer"></div>
     </section>
 
     <!-- ✨ Leave a message -->
@@ -75,37 +85,69 @@
       <p>Made with 💖 for Busayo by friends and loved ones.</p>
     </footer>
 
-    <script>
-      async function loadMessages() {
-        const res = await fetch("/api/messages");
-        const messages = await res.json();
-        const container = document.getElementById("messageContainer");
-        container.innerHTML = messages
-          .map(
-            (msg) =>
-              `<div class="message"><strong>${msg.name}</strong>: ${msg.message}</div>`
-          )
-          .join("");
-      }
+    <!-- Firebase SDK -->
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
+      // Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCJs0fbQujlTBRZR5N37PLB3J4Ls5AMp5Q",
+        authDomain: "birthdaysite-273c5.firebaseapp.com",
+        projectId: "birthdaysite-273c5",
+        storageBucket: "birthdaysite-273c5.appspot.com",
+        messagingSenderId: "854560117820",
+        appId: "1:854560117820:web:0a2823d48f2b6deeb61f39",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Handle form submission
       document
         .getElementById("wishForm")
         .addEventListener("submit", async (e) => {
-          e.preventDefault();
+          e.preventDefault(); // prevent page refresh
           const name = document.getElementById("name").value;
           const message = document.getElementById("message").value;
 
-          await fetch("/api/messages", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, message }),
-          });
+          if (name && message) {
+            await addDoc(collection(db, "messages"), {
+              name,
+              message,
+              timestamp: Date.now(),
+            });
 
-          document.getElementById("wishForm").reset();
-          loadMessages();
+            alert("🎉 Message added!");
+            document.getElementById("wishForm").reset();
+            loadMessages(); // refresh messages
+          }
         });
 
-      loadMessages();
+      // Load all messages
+      async function loadMessages() {
+        const querySnapshot = await getDocs(collection(db, "messages"));
+        const container = document.getElementById("messagesContainer");
+        container.innerHTML = ""; // clear current messages
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "message";
+          div.innerHTML = `<strong>${data.name}:</strong> ${data.message}`;
+          container.appendChild(div);
+        });
+      }
+
+      // Load messages on page load
+      window.addEventListener("DOMContentLoaded", loadMessages);
     </script>
   </body>
 </html>
