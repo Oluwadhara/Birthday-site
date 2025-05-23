@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday Busayo 🎉</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- 🌟 Header -->
+    <header>
+      <nav>
+        <h1>Happy Birthday Busayo</h1>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#wish">Send Wish</a></li>
+          <li><a href="#messages">Messages</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- 🎉 Hero Section -->
+    <section id="hero">
+      <div class="hero-overlay">
+        <img id="hero-image" src="assets/hero.jpg" alt="Hero Image" />
+        <div class="hero-text">
+          <h2>
+            Wishing a Happy Birthday to a loving Mother, Wife, Sister and
+            Mentor.
+          </h2>
+          <a href="#wish" class="cta-button">Leave a birthday message</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 💖 About Section -->
+    <section id="about">
+      <h2>About Busayo Oladipupo</h2>
+      <p>
+        Busayo is an amazing soul whose smile lights up every room. She's a true
+        friend, a kind heart, and the life of the party. Today, we celebrate
+        everything that makes her special. 💕
+      </p>
+    </section>
+
+    <!-- Galleries -->
+    <section id="gallery">
+      <h2>Memories</h2>
+      <p style="font-size: 0.9rem; opacity: 0.6">← Swipe through memories →</p>
+      <div class="gallery">
+        <img src="assets/photo4.jpg" alt="" />
+        <img src="assets/hero.jpg" alt="" />
+        <img src="assets/photo3.jpg" alt="" />
+      </div>
+    </section>
+
+    <!-- 💌 Message Wall -->
+    <section id="messages">
+      <h2>Messages for Busayo</h2>
+      <div id="messageContainer"></div>
+    </section>
+
+    <!-- ✨ Leave a message -->
+    <section id="wish">
+      <h2>Send a Birthday Wish</h2>
+      <form id="wishForm">
+        <input type="text" id="name" placeholder="Your Name" required />
+        <textarea id="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Wish</button>
+      </form>
+    </section>
+
+    <footer>
+      <p>Made with 💖 for Busayo by friends and loved ones.</p>
+    </footer>
+
+    <script>
+      async function loadMessages() {
+        const res = await fetch("/api/messages");
+        const messages = await res.json();
+        const container = document.getElementById("messageContainer");
+        container.innerHTML = messages
+          .map(
+            (msg) =>
+              `<div class="message"><strong>${msg.name}</strong>: ${msg.message}</div>`
+          )
+          .join("");
+      }
+
+      document
+        .getElementById("wishForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("name").value;
+          const message = document.getElementById("message").value;
+
+          await fetch("/api/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, message }),
+          });
+
+          document.getElementById("wishForm").reset();
+          loadMessages();
+        });
+
+      loadMessages();
+    </script>
+  </body>
+</html>
