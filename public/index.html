@@ -9,9 +9,10 @@
   <body>
     <!-- 🌟 Header -->
     <header>
-      <nav>
+      <nav class="nav-container">
         <h1>Happy Birthday Busayo</h1>
-        <ul>
+        <button class="menu-toggle" aria-label="Toggle Menu">&#9776;</button>
+        <ul class="nav-links">
           <li><a href="#hero">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#wish">Send Wish</a></li>
@@ -253,6 +254,16 @@
       prevBtn.addEventListener("click", () => {
         currentIndex = (currentIndex - 1 + videos.length) % videos.length;
         showVideo(currentIndex);
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.querySelector(".menu-toggle");
+        const navLinks = document.querySelector(".nav-links");
+
+        toggleBtn.addEventListener("click", function () {
+          navLinks.classList.toggle("show");
+        });
       });
     </script>
   </body>
