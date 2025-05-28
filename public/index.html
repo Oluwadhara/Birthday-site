@@ -101,6 +101,47 @@
       </form>
     </section>
 
+    <!-- 🎬 Video Gallery -->
+    <section id="videoGallery">
+      <h2>Video Moments</h2>
+      <div class="video-thumbnails">
+        <img
+          src="assets/thumb1.png"
+          data-video="assets/video1.mp4"
+          alt="Video 1"
+        />
+        <img
+          src="assets/thumb2.png"
+          data-video="assets/video2.mp4"
+          alt="Video 2"
+        />
+        <img
+          src="assets/thumb3.png"
+          data-video="assets/video3.mp4"
+          alt="Video 3"
+        />
+        <img
+          src="assets/thumb4.png"
+          data-video="assets/video4.mp4"
+          alt="Video 3"
+        />
+        <!-- Add more as needed -->
+      </div>
+    </section>
+
+    <!-- 🖼️ Video Modal -->
+    <div id="videoModal" class="hidden">
+      <div class="overlay"></div>
+      <div class="modal-content">
+        <button class="close-btn">&times;</button>
+        <video id="videoPlayer" controls autoplay></video>
+        <div class="nav-arrows">
+          <button id="prevVideo">&#10094;</button>
+          <button id="nextVideo">&#10095;</button>
+        </div>
+      </div>
+    </div>
+
     <footer>
       <p>Made with 💖 for Busayo by friends and loved ones.</p>
     </footer>
@@ -168,6 +209,51 @@
 
       // Load messages on page load
       window.addEventListener("DOMContentLoaded", loadMessages);
+    </script>
+    <script>
+      const thumbnails = document.querySelectorAll(".video-thumbnails img");
+      const modal = document.getElementById("videoModal");
+      const videoPlayer = document.getElementById("videoPlayer");
+      const closeBtn = document.querySelector(".close-btn");
+      const prevBtn = document.getElementById("prevVideo");
+      const nextBtn = document.getElementById("nextVideo");
+
+      let currentIndex = 0;
+
+      const videos = Array.from(thumbnails).map((thumb) => ({
+        src: thumb.dataset.video,
+        thumb: thumb.src,
+      }));
+
+      function showVideo(index) {
+        currentIndex = index;
+        videoPlayer.src = videos[index].src;
+        modal.classList.remove("hidden");
+      }
+
+      thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener("click", () => showVideo(index));
+      });
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        videoPlayer.pause();
+      });
+
+      modal.querySelector(".overlay").addEventListener("click", () => {
+        modal.classList.add("hidden");
+        videoPlayer.pause();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % videos.length;
+        showVideo(currentIndex);
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + videos.length) % videos.length;
+        showVideo(currentIndex);
+      });
     </script>
   </body>
 </html>
